@@ -230,9 +230,8 @@ createButton("Collect Basement Key", function()
     print("Successfully collected the basement key!")
 end)
 
--- Collect Money Bags
 createButton("Collect Money Bags", function()
-    Logic here
+    -- Placeholder logic
     print("Money Bags collected!")
 end)
 

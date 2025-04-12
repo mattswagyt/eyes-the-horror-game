@@ -123,6 +123,25 @@ createButton("Full Bright", function()
     print("Full Bright activated!")
 end)
 
+-- Remove Thunder
+createButton("Remove Thunder", function()
+    local thunder = workspace:FindFirstChild("Thunder")
+    
+    if thunder then
+        thunder:Destroy()  -- Removes the Thunder from workspace
+        print("Removed Thunder!")
+        
+        -- Send a notification with custom text
+        StarterGui:SetCore("SendNotification", {
+            Title = "Thunder Removed!",
+            Text = "Removes Thunder, which scares the living shit out of you when you least expect it.",
+            Duration = 10
+        })
+    else
+        warn("Thunder not found in workspace!")
+    end
+end)
+
 -- Monster ESP
 createButton("Monster ESP", function()
     -- Remove existing ESP if it exists (prevents duplicates)

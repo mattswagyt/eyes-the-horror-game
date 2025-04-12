@@ -142,7 +142,7 @@ createButton("Remove Thunder", function()
     end
 end)
 
--- Cloak Player from Monster using InvisibleWalls (Shell that Follows You)
+-- Cloak Player from Monster using InvisibleWalls (Shield Follows You)
 createButton("Cloak from Monster", function()
     local wallsFolder = workspace:FindFirstChild("InvisibleWalls")
     if not wallsFolder then
@@ -159,21 +159,23 @@ createButton("Cloak from Monster", function()
     cloak.Transparency = 1
     cloak.Parent = wallsFolder
 
-    -- Update position every frame to follow the player
+    -- Update position using Heartbeat for better sync
     local runService = game:GetService("RunService")
     local connection
 
-    connection = runService.RenderStepped:Connect(function()
-        if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            connection:Disconnect()
-            cloak:Destroy()
-            return
-        end
+    connection = runService.Heartbeat:Connect(function()
+        local character = LocalPlayer.Character
+        local hrp = character and character:FindFirstChild("HumanoidRootPart")
 
-        cloak.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+        if hrp and cloak and cloak.Parent then
+            cloak.CFrame = hrp.CFrame
+        else
+            if connection then connection:Disconnect() end
+            if cloak then cloak:Destroy() end
+        end
     end)
 
-    print("Cloaking activated! You are now invisible to Krause.")
+    print("Cloaking activated! Monster should ignore you.")
 end)
 
 -- Monster ESP

@@ -242,10 +242,12 @@ createButton("Collect Basement Key", function()
         return
     end
 
-    -- Parent the key to the player's backpack
-    key.Parent = LocalPlayer:WaitForChild("Backpack")
+    -- Clone the key and set its position to the player's location
+    local newKey = key:Clone()
+    newKey.Parent = workspace
+    newKey.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)  -- slightly above the player to avoid collision
 
-    print("Successfully collected the basement key!")
+    print("Successfully spawned a basement key at your location!")
 end)
 
 -- Update Floor Label every second

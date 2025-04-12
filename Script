@@ -1,0 +1,254 @@
+-- Roblox Lua Script for "Eyes the Horror Game - Mansion" (By BMF)
+-- Script handles a draggable UI with multiple functionalities
+
+-- Variables
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local StarterGui = game:GetService("StarterGui")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create UI Elements
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local LocationLabel = Instance.new("TextLabel")
+local ErrorLog = Instance.new("TextLabel")
+local UIListLayout = Instance.new("UIListLayout")
+
+-- UI Properties
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Name = "EyesUI"
+
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Size = UDim2.new(0, 300, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+
+Title.Parent = MainFrame
+Title.Text = "Eyes the Horror Game - Mansion (By BMF)"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+
+LocationLabel.Parent = MainFrame
+LocationLabel.Text = "Location: Loading..."
+LocationLabel.Size = UDim2.new(1, 0, 0, 30)
+LocationLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+LocationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+LocationLabel.Font = Enum.Font.SourceSans
+LocationLabel.TextSize = 16
+
+ErrorLog.Parent = MainFrame
+ErrorLog.Text = "Error Log: None"
+ErrorLog.Size = UDim2.new(1, 0, 0, 30)
+ErrorLog.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+ErrorLog.TextColor3 = Color3.fromRGB(255, 85, 85)
+ErrorLog.Font = Enum.Font.SourceSans
+ErrorLog.TextSize = 14
+ErrorLog.TextWrapped = true
+ErrorLog.TextYAlignment = Enum.TextYAlignment.Top
+
+UIListLayout.Parent = MainFrame
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Toggle UI with Delete key
+UIS.InputBegan:Connect(function(input, processed)
+    if not processed and input.KeyCode == Enum.KeyCode.Delete then
+        MainFrame.Visible = not MainFrame.Visible
+    end
+end)
+
+-- Function to Create Buttons
+local function createButton(name, callback)
+    local Button = Instance.new("TextButton")
+    Button.Parent = MainFrame
+    Button.Text = name
+    Button.Size = UDim2.new(1, 0, 0, 30)
+    Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.Font = Enum.Font.SourceSans
+    Button.TextSize = 16
+    Button.MouseButton1Click:Connect(function()
+        pcall(callback)
+    end)
+    return Button
+end
+
+-- ✅ Notification when script loads
+StarterGui:SetCore("SendNotification", {
+    Title = "Granny Script Loaded!";
+    Text = "All features are ready.";
+    Duration = 10;
+})
+
+createButton("Infinite Yield", function()
+    local success, result = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end)
+    if success then
+        print("Infinite Yield executed!")
+    else
+        print("Error executing Infinite Yield")
+    end
+end)
+
+createButton("Dex Explorer", function()
+    local success, result = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    end)
+    if success then
+        print("Dex Explorer executed!")
+    else
+        print("Error executing Dex Explorer")
+    end
+end)
+
+-- Full Bright Function (NEW)
+createButton("Full Bright", function()
+    -- Set all lighting properties to max visibility
+    Lighting.Brightness = 5
+    Lighting.ClockTime = 14
+    Lighting.FogEnd = 100000
+    Lighting.GlobalShadows = false
+    Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+    print("Full Bright activated!")
+end)
+
+-- Monster ESP
+createButton("Monster ESP", function()
+    -- Remove existing ESP if it exists (prevents duplicates)
+    if workspace.Krasue:FindFirstChild("ESPHighlight") then
+        workspace.Krasue:FindFirstChild("ESPHighlight"):Destroy()
+    end
+
+    -- Create new ESP Highlight
+    local esp = Instance.new("Highlight")
+    esp.Name = "ESPHighlight"
+    esp.Adornee = workspace.Krasue
+    esp.FillColor = Color3.fromRGB(255, 0, 0) -- Red outline
+    esp.FillTransparency = 1 -- Makes the fill invisible (outline only)
+    esp.OutlineColor = Color3.fromRGB(255, 0, 0)
+    esp.OutlineTransparency = 0 -- Fully visible outline
+    esp.Parent = workspace.Krasue
+
+    print("Monster ESP activated!")
+end)
+
+-- Money Bags ESP
+createButton("Money Bag ESP", function()
+    local moneyBagsFolder = workspace:FindFirstChild("MoneyBags")
+    if not moneyBagsFolder then
+        warn("MoneyBags folder not found!")
+        return
+    end
+
+    for _, bag in ipairs(moneyBagsFolder:GetChildren()) do
+        -- Avoid duplicate highlights
+        if not bag:FindFirstChild("ESPHighlight") then
+            local esp = Instance.new("Highlight")
+            esp.Name = "ESPHighlight"
+            esp.Adornee = bag
+            esp.FillColor = Color3.fromRGB(0, 255, 0) -- Green
+            esp.FillTransparency = 1 -- No fill, outline only
+            esp.OutlineColor = Color3.fromRGB(0, 255, 0)
+            esp.OutlineTransparency = 0 -- Fully visible
+            esp.Parent = bag
+        end
+    end
+
+    print("Money Bag ESP activated!")
+end)
+
+-- Eyes ESP
+createButton("Eyes ESP", function()
+    local eyesFolder = workspace:FindFirstChild("Eyes")
+    if not eyesFolder then
+        warn("Eyes folder not found!")
+        return
+    end
+
+    for _, eye in ipairs(eyesFolder:GetChildren()) do
+        -- Add highlight if not already present
+        if not eye:FindFirstChild("ESPHighlight") then
+            local esp = Instance.new("Highlight")
+            esp.Name = "ESPHighlight"
+            esp.Adornee = eye
+            esp.FillColor = Color3.fromRGB(0, 0, 255) -- Blue
+            esp.FillTransparency = 1
+            esp.OutlineColor = Color3.fromRGB(0, 0, 255)
+            esp.OutlineTransparency = 0
+            esp.Parent = eye
+        end
+
+        -- Add floating text label if not already present
+        if not eye:FindFirstChild("ESPLabel") then
+            local billboard = Instance.new("BillboardGui")
+            billboard.Name = "ESPLabel"
+            billboard.Size = UDim2.new(0, 100, 0, 50)
+            billboard.AlwaysOnTop = true
+            billboard.StudsOffset = Vector3.new(0, 3, 0) -- a bit above the eye
+            billboard.Adornee = eye
+            billboard.Parent = eye
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(1, 0, 1, 0)
+            label.BackgroundTransparency = 1
+            label.Text = "👁️ EYE"
+            label.TextColor3 = Color3.fromRGB(0, 0, 255)
+            label.TextStrokeTransparency = 0.5
+            label.TextScaled = true
+            label.Font = Enum.Font.GothamBold
+            label.Parent = billboard
+        end
+    end
+
+    print("Eyes ESP activated!")
+end)
+
+
+-- Collect Basement Key
+createButton("Collect Basement Key", function()
+    local player = game.Players.LocalPlayer
+    local key = workspace:FindFirstChild("Tools") and workspace.Tools:FindFirstChild("Key")
+
+    if not player or not key then
+        warn("Player or Key not found!")
+        return
+    end
+
+    -- Parent the key to the player's backpack
+    key.Parent = player:WaitForChild("Backpack")
+
+    print("Successfully collected the basement key!")
+end)
+
+-- Collect Money Bags
+createButton("Collect Money Bags", function()
+    Logic here
+    print("Money Bags collected!")
+end)
+
+-- TP to Spawn
+createButton("Teleport to Spawn", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    local tpPart = workspace:FindFirstChild("TpPartMansion")
+
+    if hrp and tpPart then
+        hrp.CFrame = tpPart.CFrame + Vector3.new(0, 3, 0) -- teleport slightly above the part to avoid getting stuck
+        print("Successfully teleported to the spawn!")
+    else
+        warn("Failed to teleport: HumanoidRootPart or TpPartMansion not found!")
+    end
+end)
+
+

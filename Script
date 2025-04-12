@@ -231,8 +231,20 @@ createButton("Collect Basement Key", function()
 end)
 
 createButton("Collect Money Bags", function()
-    -- Placeholder logic
-    print("Money Bags collected!")
+    local moneyBagsFolder = game.Workspace:FindFirstChild("MoneyBags")
+    
+    if moneyBagsFolder then
+        for _, bag in pairs(moneyBagsFolder:GetChildren()) do
+            if bag:IsA("MeshPart") and bag.Name == "MoneyBag" then
+                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, bag, 0)
+                wait()
+                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, bag, 1)
+            end
+        end
+        print("Collected all money bags.")
+    else
+        warn("MoneyBags folder not found in Workspace.")
+    end
 end)
 
 -- TP to Spawn

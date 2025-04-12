@@ -142,6 +142,28 @@ createButton("Remove Thunder", function()
     end
 end)
 
+-- Cloak Player from Monster using InvisibleWalls
+createButton("Cloak from Monster", function()
+    local wallsFolder = workspace:FindFirstChild("InvisibleWalls")
+    if not wallsFolder then
+        warn("InvisibleWalls folder not found!")
+        return
+    end
+
+    -- Create a part and put it in the InvisibleWalls folder
+    local cloak = Instance.new("Part")
+    cloak.Name = "Part"
+    cloak.Size = Vector3.new(5, 7, 5)
+    cloak.Anchored = true
+    cloak.CanCollide = false
+    cloak.Transparency = 1
+    cloak.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+
+    cloak.Parent = wallsFolder
+
+    print("You're cloaked from Krause!")
+end)
+
 -- Monster ESP
 createButton("Monster ESP", function()
     -- Remove existing ESP if it exists (prevents duplicates)

@@ -252,6 +252,48 @@ createButton("Collect Money Bags", function()
     end
 end)
 
+-- Collect Eyes to Player's Location
+createButton("Collect Eyes", function()
+    local eyesFolder = workspace:FindFirstChild("Eyes")
+    
+    if eyesFolder then
+        local clonedEyesCount = 0
+        for _, eye in pairs(eyesFolder:GetChildren()) do
+            if eye:IsA("Part") and eye.Name == "Eye" then
+                -- Clone the eye part
+                local newEye = eye:Clone()
+                
+                -- Clone decals if they exist
+                for _, decal in pairs(eye:GetChildren()) do
+                    if decal:IsA("Decal") then
+                        local newDecal = decal:Clone()
+                        newDecal.Parent = newEye
+                    end
+                end
+
+                -- Set new position at the player's location
+                newEye.Parent = workspace
+                newEye.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+
+                clonedEyesCount = clonedEyesCount + 1
+
+                -- Stop cloning after 20 eyes
+                if clonedEyesCount >= 20 then
+                    break
+                end
+            end
+        end
+        
+        if clonedEyesCount > 0 then
+            print("Spawned " .. clonedEyesCount .. " Eyes at your location.")
+        else
+            warn("No Eyes parts found in the Eyes folder.")
+        end
+    else
+        warn("Eyes folder not found in Workspace.")
+    end
+end)
+
 -- Collect Basement Key
 createButton("Collect Basement Key", function()
     local key = workspace:FindFirstChild("Tools") and workspace.Tools:FindFirstChild("Key")

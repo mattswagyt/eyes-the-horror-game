@@ -8,12 +8,13 @@ local StarterGui = game:GetService("StarterGui")
 local UIS = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local workspace = game:GetService("Workspace")
 
 -- Create UI Elements
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local LocationLabel = Instance.new("TextLabel")
+local FloorLabel = Instance.new("TextLabel")
 local ErrorLog = Instance.new("TextLabel")
 local UIListLayout = Instance.new("UIListLayout")
 
@@ -38,13 +39,13 @@ Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.SourceSansBold
 Title.TextSize = 18
 
-LocationLabel.Parent = MainFrame
-LocationLabel.Text = "Location: Loading..."
-LocationLabel.Size = UDim2.new(1, 0, 0, 30)
-LocationLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-LocationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-LocationLabel.Font = Enum.Font.SourceSans
-LocationLabel.TextSize = 16
+FloorLabel.Parent = MainFrame
+FloorLabel.Text = "Floor: Loading..."
+FloorLabel.Size = UDim2.new(1, 0, 0, 30)
+FloorLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+FloorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloorLabel.Font = Enum.Font.SourceSans
+FloorLabel.TextSize = 16
 
 ErrorLog.Parent = MainFrame
 ErrorLog.Text = "Error Log: None"
@@ -84,7 +85,7 @@ end
 
 -- ✅ Notification when script loads
 StarterGui:SetCore("SendNotification", {
-    Title = "Granny Script Loaded!";
+    Title = "Eyes Script Loaded!";
     Text = "All features are ready.";
     Duration = 10;
 })
@@ -213,37 +214,45 @@ createButton("Eyes ESP", function()
     print("Eyes ESP activated!")
 end)
 
-
--- Collect Basement Key
-createButton("Collect Basement Key", function()
-    local player = game.Players.LocalPlayer
-    local key = workspace:FindFirstChild("Tools") and workspace.Tools:FindFirstChild("Key")
-
-    if not player or not key then
-        warn("Player or Key not found!")
-        return
-    end
-
-    -- Parent the key to the player's backpack
-    key.Parent = player:WaitForChild("Backpack")
-
-    print("Successfully collected the basement key!")
-end)
-
+-- Collect Money Bags to Player's Location
 createButton("Collect Money Bags", function()
-    local moneyBagsFolder = game.Workspace:FindFirstChild("MoneyBags")
+    local moneyBagsFolder = workspace:FindFirstChild("MoneyBags")
     
     if moneyBagsFolder then
         for _, bag in pairs(moneyBagsFolder:GetChildren()) do
             if bag:IsA("MeshPart") and bag.Name == "MoneyBag" then
-                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, bag, 0)
-                wait()
-                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, bag, 1)
+                -- Move money bags to the player's location
+                local newBag = bag:Clone()
+                newBag.Parent = workspace
+                newBag.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
             end
         end
-        print("Collected all money bags.")
+        print("Spawned all money bags at your location.")
     else
         warn("MoneyBags folder not found in Workspace.")
+    end
+end)
+
+-- Collect Basement Key
+createButton("Collect Basement Key", function()
+    local key = workspace:FindFirstChild("Tools") and workspace.Tools:FindFirstChild("Key")
+
+    if not key then
+        warn("Key not found!")
+        return
+    end
+
+    -- Parent the key to the player's backpack
+    key.Parent = LocalPlayer:WaitForChild("Backpack")
+
+    print("Successfully collected the basement key!")
+end)
+
+-- Update Floor Label every second
+game:GetService("RunService").Heartbeat:Connect(function()
+    local floorValue = workspace.Krasue:FindFirstChild("FloorValue")
+    if floorValue then
+        FloorLabel.Text = "Floor: " .. floorValue.Value
     end
 end)
 
@@ -261,5 +270,3 @@ createButton("Teleport to Spawn", function()
         warn("Failed to teleport: HumanoidRootPart or TpPartMansion not found!")
     end
 end)
-
-
